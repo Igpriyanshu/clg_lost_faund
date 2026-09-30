@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - College Lost & Found</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* BASE RESETS */
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0f1422;
+            color: #slate-200;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        * { box-sizing: border-box; color: #cbd5e1; }
+
+        /* PREMIUM SIDEBAR */
+        aside {
+            width: 260px;
+            background-color: #020617;
+            border-right: 1px solid rgba(51, 65, 85, 0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 24px;
+        }
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+        .logo-box {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, #2563eb, #6366f1);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+        .brand-name {
+            font-size: 18px; font-weight: 700; color: #ffffff; margin: 0;
+        }
+        .nav-links { display: flex; flex-direction: column; gap: 8px; }
+        .nav-btn {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 16px; border-radius: 12px;
+            text-decoration: none; font-size: 14px; font-weight: 500;
+            transition: all 0.2s;
+        }
+        .nav-btn.active {
+            background: linear-gradient(90deg, #2563eb, #4f46e5);
+            color: white; font-weight: 600;
+        }
+        .nav-btn.inactive { color: #94a3b8; }
+        .nav-btn.inactive:hover { background-color: #0f172a; color: #f8fafc; }
+        .footer-info { font-size: 11px; color: #475569; letter-spacing: 0.5px; }
+
+        /* MAIN CONTENT INTERFACE */
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        /* TOP HEADER NAVBAR */
+        header {
+            background-color: rgba(2, 6, 23, 0.6);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky; top: 0; z-index: 10;
+        }
+        .search-form { position: relative; width: 380px; }
+        .search-input {
+            width: 100%;
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 9999px;
+            padding: 10px 20px 10px 40px;
+            font-size: 14px; color: #f1f5f9;
+        }
+        .search-input:focus { outline: none; border-color: #2563eb; }
+        .search-icon { position: absolute; left: 16px; top: 12px; font-size: 14px; }
+        
+        .user-profile { display: flex; align-items: center; gap: 16px; }
+        .user-meta { text-align: right; }
+        .user-name { font-size: 14px; font-weight: 600; color: #f8fafc; margin: 0; }
+        .user-status { font-size: 11px; color: #34d399; font-weight: 500; margin: 0; text-transform: uppercase; }
+        .avatar-box {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: white; font-size: 14px;
+        }
+        .logout-btn {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 6px 14px; border-radius: 10px; text-decoration: none;
+            font-size: 12px; font-weight: 600; transition: background 0.2s;
+        }
+        .logout-btn:hover { background-color: rgba(239, 68, 68, 0.2); }
+
+        /* PORTAL BODY CONTAINER */
+        main { padding: 32px; display: flex; flex-direction: column; gap: 32px; }
+
+        /* METRICS GRIDS */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 24px;
+        }
+        .metric-card {
+            background-color: #020617;
+            border: 1px solid rgba(51, 65, 85, 0.4);
+            padding: 24px; border-radius: 16px;
+            display: flex; align-items: center; gap: 16px;
+        }
+        .metric-icon {
+            width: 48px; height: 48px;
+            border-radius: 12px; font-size: 20px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .m-lost { background-color: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); }
+        .m-found { background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .m-system { background-color: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); }
+        .m-secure { background-color: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); }
+        
+        .metric-title { font-size: 11px; font-weight: 500; color: #64748b; text-transform: uppercase; margin: 0; }
+        .metric-value { font-size: 24px; font-weight: 700; color: #f8fafc; margin: 4px 0 0 0; }
+
+        /* LOWER LAYOUT PANEL */
+        .panel-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 32px;
+        }
+        @media (max-width: 900px) { .panel-grid { grid-template-columns: 1fr; } }
+
+        .form-block {
+            background-color: #020617;
+            padding: 24px; border-radius: 16px;
+            border: 1px solid rgba(51, 65, 85, 0.4);
+        }
+        .section-title { font-size: 14px; font-weight: 700; color: #f1f5f9; margin: 0 0 20px 0; display: flex; gap: 8px; }
+        
+        /* FORM CONTROLS */
+        .form-control { width: 100%; margin-bottom: 16px; }
+        .form-control input, .form-control select, .form-control textarea {
+            width: 100%; background-color: #0f172a; border: 1px solid #334155;
+            border-radius: 12px; padding: 12px; font-size: 13px; color: #e2e8f0;
+        }
+        .form-control select { color: #94a3b8; }
+        .form-control input:focus, .form-control select:focus, .form-control textarea:focus { outline: none; border-color: #2563eb; }
+        .submit-btn {
+            width: 100%; background: linear-gradient(90deg, #2563eb, #4f46e5);
+            color: white; border: none; font-weight: 700; font-size: 14px;
+            padding: 14px; border-radius: 12px; cursor: pointer; transition: opacity 0.2s;
+        }
+        .submit-btn:hover { opacity: 0.9; }
+
+        /* DIRECTORY CARDS GRID */
+        .directory-header { font-size: 16px; font-weight: 700; color: #f1f5f9; margin: 0 0 20px 0; }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
+        }
+        .item-card {
+            background-color: #020617;
+            border: 1px solid rgba(51, 65, 85, 0.3);
+            border-radius: 16px; padding: 20px;
+            display: flex; flex-direction: column; gap: 16px;
+            transition: border-color 0.2s;
+        }
+        .item-card:hover { border-color: #475569; }
+        
+        .card-top { display: flex; justify-content: space-between; align-items: center; }
+        .badge {
+            padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 700; text-transform: uppercase;
+        }
+        .badge.lost { background-color: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .badge.found { background-color: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .category-lbl { font-size: 11px; background-color: #0f172a; padding: 4px 8px; border-radius: 6px; color: #94a3b8; }
+        
+        .item-title { font-size: 16px; font-weight: 700; color: #f8fafc; margin: 0; }
+        .item-desc { font-size: 12px; color: #94a3b8; line-height: 1.5; margin: 6px 0 0 0; }
+        
+        .card-meta {
+            border-top: 1px solid #0f172a; padding-top: 12px;
+            display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: #64748b;
+        }
+        .meta-line b { color: #94a3b8; font-weight: 500; }
+        .meta-line span { color: #cbd5e1; }
+        
+        .no-data {
+            grid-column: span 3; text-align: center; padding: 48px;
+            border: 2px dashed #1e293b; border-radius: 16px; color: #64748b; font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div>
+            <div class="brand-logo">
+                <div class="logo-box">🔍</div>
+                <h1 class="brand-name">L&F Campus</h1>
+            </div>
+            <nav class="nav-links">
+                <a href="/dashboard" class="nav-btn active">
+                    <span>📊</span> <span>Dashboard</span>
+                </a>
+                <a href="#directory-section" class="nav-btn inactive">
+                    <span>📦</span> <span>Campus Directory</span>
+                </a>
+            </nav>
+        </div>
+        <div class="footer-info">
+            PSP College Project &copy; 2026
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+        
+        <header>
+            <form action="/dashboard" method="GET" class="search-form">
+                <span class="search-icon">🔍</span>
+                <input type="text" name="search" placeholder="Search by name, category, or room..." class="search-input">
+            </form>
+            
+            <div class="user-profile">
+                <div class="user-meta">
+                    <p class="user-name">{{ username }}</p>
+                    <p class="user-status">Active Student</p>
+                </div>
+                <div class="avatar-box">
+                    {{ username[:2].upper() }}
+                </div>
+                <div style="width: 1px; height: 24px; background-color: #1e293b;"></div>
+                <a href="/logout" class="logout-btn">Logout</a>
+            </div>
+        </header>
+
+        <main>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon m-lost">🚨</div>
+                    <div>
+                        <p class="metric-title">Total Lost Items</p>
+                        <h3 class="metric-value">{{ total_lost }}</h3>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon m-found">🎁</div>
+                    <div>
+                        <p class="metric-title">Total Found Items</p>
+                        <h3 class="metric-value">{{ total_found }}</h3>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon m-system">⚡</div>
+                    <div>
+                        <p class="metric-title">System Status</p>
+                        <h3 class="metric-value">Live</h3>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon m-secure">🛡️</div>
+                    <div>
+                        <p class="metric-title">Secure Vault</p>
+                        <h3 class="metric-value">Online</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-grid">
+                <div class="form-block">
+                    <h3 class="section-title"><span>📝</span> <span>Report New Campus Item</span></h3>
+                    <form action="/report-item" method="POST">
+                        <div class="form-control">
+                            <input type="text" name="item_name" placeholder="Item Name (e.g., Dell Laptop Charger)" required>
+                        </div>
+                        <div class="form-control">
+                            <select name="category" required>
+                                <option value="">Select Category</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Documents">Documents</option>
+                                <option value="Keys/Wallets">Keys/Wallets</option>
+                                <option value="Books/Bags">Books/Bags</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-control">
+                            <select name="status" required>
+                                <option value="">Select Status</option>
+                                <option value="Lost">Lost</option>
+                                <option value="Found">Found</option>
+                            </select>
+                        </div>
+                        <div class="form-control">
+                            <input type="text" name="location" placeholder="Last Seen Location (e.g., Computer Lab)" required>
+                        </div>
+                        <div class="form-control">
+                            <textarea name="description" placeholder="Provide description or contact info..." rows="4"></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">Submit Campus Report</button>
+                    </form>
+                </div>
+
+                <div class="form-block" style="display: flex; flex-direction: column; justify-content: center; text-align: center; background-color: rgba(2, 6, 23, 0.3);">
+                    <div style="font-size: 40px; margin-bottom: 12px;">🏫</div>
+                    <h4 style="margin: 0; font-size: 18px; color: #f8fafc;">PSP Lost & Found Hub</h4>
+                    <p style="font-size: 13px; color: #64748b; max-width: 320px; margin: 8px auto 0 auto; line-height: 1.6;">
+                        This digital vault manages real-time student entries securely without needing third-party analytical dependencies.
+                    </p>
+                </div>
+            </div>
+
+            <div id="directory-section">
+                <h3 class="directory-header"><span>📋</span> Recent Campus Reports Directory</h3>
+                
+                <div class="cards-grid">
+                    {% for item in items %}
+                    <div class="item-card">
+                        <div class="card-top">
+                            <span class="badge {% if item.status == 'Lost' %}lost{% else %}found{% endif %}">
+                                {{ item.status }}
+                            </span>
+                            <span class="category-lbl">{{ item.category }}</span>
+                        </div>
+                        <div>
+                            <h4 class="item-title">{{ item.item_name }}</h4>
+                            <p class="item-desc">{{ item.description }}</p>
+                        </div>
+                        <div class="card-meta">
+                            <div class="meta-line">📍 <b>Location:</b> <span>{{ item.location }}</span></div>
+                            <div class="meta-line">👤 <b>Reported By:</b> <span>{{ item.reported_by }}</span></div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="no-data">
+                        No items matching your query are currently listed in the database.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+</html>
